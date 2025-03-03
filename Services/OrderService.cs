@@ -12,6 +12,8 @@ namespace Shoezy.Services
         Task<Result<object>> CreateOrder(int userId, CreateOrderDTO createOrderDTO);
 
         Task<Result<List<ViewUserOrderDetailDTO>>> GetOrderDetails(int userId);
+
+        //Task<Result<List<ViewUserOrderDetailDTO>>> GetOrdersOfUser(int userId);
         Task<Result<List<ViewUserOrderDetailDTO>>> GetAllOrders();
         Task<Result<object>> GetRevenue();
     }
@@ -43,6 +45,11 @@ namespace Shoezy.Services
         public async Task<Result<List<ViewUserOrderDetailDTO>>> GetOrderDetails(int userId) {
             return await orderRepo.GetOrderDetails(userId);
         }
+
+        //public async Task<Result<List<ViewUserOrderDetailDTO>>> GetOrdersOfUser(int userId)
+        //{
+        //    return await orderRepo.GetOrderDetails(userId);
+        //}
 
         public async Task<Result<List<ViewUserOrderDetailDTO>>> GetAllOrders() { 
             return await orderRepo.GetAllOrders();

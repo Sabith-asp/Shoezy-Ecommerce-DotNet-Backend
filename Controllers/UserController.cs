@@ -41,7 +41,7 @@ namespace Shoezy.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        [HttpPost("block-or-unblock/{id}")]
+        [HttpPut("block-or-unblock/{id}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> BlockOrUnblockUser(int id) {
             var response = await service.BlockOrUnblockUser(id);

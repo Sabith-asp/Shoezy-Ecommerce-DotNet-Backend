@@ -10,11 +10,13 @@ namespace Shoezy.Repositories
     public interface IProductRepository {
         Task<Result<object>> AddProduct(Product newproduct);
         Task<Result<List<ProductGetDTO>>>  GetAllProduct ();
+        Task<Result<List<ProductGetAdminDTO>>> GetAllProductByAdmin();
 
         Task<Result<Product>> GetProductById(Guid Id);
         Task<Result<ProductGetDTO>> GetUserProductById(Guid Id);
 
-        Task<Result<List<ProductGetDTO>>> GetProductByCategory(string category);
+        Task<Result<List<ProductGetAdminDTO>>> GetProductByCategory(string category);
+        Task<List<Product>> GetProductByBrand(string brand);
         Task<Result<List<ProductGetDTO>>> GetPaginatedProduct(int pageNumber,int pageSize);
 
         Task<Result<List<ProductGetDTO>>> SearchProduct(string param);
@@ -24,6 +26,10 @@ namespace Shoezy.Repositories
         Task SaveChangesAsync();
 
         Task<Result<object>> DeleteProduct(Guid productid);
+
+        Task<bool> AddCategory(Category category);
+
+        Task<List<Category>> GetCategory();
     }
     public class ProductRepository:IProductRepository
     {
@@ -54,6 +60,20 @@ namespace Shoezy.Repositories
             } 
             catch (Exception ex) {
                 return new Result<List<ProductGetDTO>> { StatusCode = 500, Message = ex.Message };
+            }
+        }
+
+        public async Task<Result<List<ProductGetAdminDTO>>> GetAllProductByAdmin()
+        {
+            try
+            {
+                var data = await context.Products.Include(p => p.Category).ToListAsync();
+                var mappeddata = mapper.Map<List<ProductGetAdminDTO>>(data);
+                return new Result<List<ProductGetAdminDTO>> { StatusCode = 200, Message = "Product Loaded Successfully", Data = mappeddata };
+            }
+            catch (Exception ex)
+            {
+                return new Result<List<ProductGetAdminDTO>> { StatusCode = 500, Message = ex.Message };
             }
         }
 
@@ -89,18 +109,36 @@ namespace Shoezy.Repositories
             }
         }
 
-        public async Task<Result<List<ProductGetDTO>>> GetProductByCategory(string category)
+        public async Task<Result<List<ProductGetAdminDTO>>> GetProductByCategory(string category)
         {
             try {
-                var data = await context.Products.Include(x => x.Category).Where(x => x.Category.Name == category).ToListAsync();
+                var data = await context.Products.Include(x => x.Category).Where(x => x.Category.Name.ToLower() == category.ToLower()).ToListAsync();
                 if (data.Count < 1) {
-                    return new Result<List<ProductGetDTO>> { StatusCode = 404, Message = "No products found in this category" };
+                    return new Result<List<ProductGetAdminDTO>> { StatusCode = 404, Message = "No products found in this category" };
                         }
-                var result=mapper.Map<List<ProductGetDTO>>(data);
-                return new Result<List<ProductGetDTO>> { StatusCode = 200, Message = "ProductByCategory success",Data= result };
+                var result=mapper.Map<List<ProductGetAdminDTO>>(data);
+                return new Result<List<ProductGetAdminDTO>> { StatusCode = 200, Message = "ProductByCategory success",Data= result };
             } catch (Exception ex) {
-                return new Result<List<ProductGetDTO>> { StatusCode = 500, Message = ex.Message };
+                return new Result<List<ProductGetAdminDTO>> { StatusCode = 500, Message = ex.Message };
             }
+        }
+        public async Task<List<Product>> GetProductByBrand(string brand)
+        {
+            return await context.Products.Include(x => x.Category).Where(x => x.Brand.ToLower() == brand.ToLower()).ToListAsync();
+            //try
+            //{
+            //    var data = await context.Products.Include(x => x.Category).Where(x => x.Brand== brand).ToListAsync();
+            //    if (data.Count < 1)
+            //    {
+            //        return new Result<List<ProductGetDTO>> { StatusCode = 404, Message = "No products found in this brand" };
+            //    }
+            //    var result = mapper.Map<List<ProductGetDTO>>(data);
+            //    return new Result<List<ProductGetDTO>> { StatusCode = 200, Message = "product by brand success", Data = result };
+            //}
+            //catch (Exception ex)
+            //{
+            //    return new Result<List<ProductGetDTO>> { StatusCode = 500, Message = ex.Message };
+            //}
         }
 
         public async Task<Result<List<ProductGetDTO>>> GetPaginatedProduct(int pageNumber, int pageSize)
@@ -176,6 +214,16 @@ namespace Shoezy.Repositories
         //public async Task<Result<ProductGetDTO>> GetUserProductById(Guid Id) { 
         //    return await context.Produ
         //}
+
+        public async Task<bool> AddCategory(Category category) {
+           await context.Categories.AddAsync(category);
+            await context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<List<Category>> GetCategory() {
+            return await context.Categories.ToListAsync();
+        }
 
         public async Task SaveChangesAsync()
         {

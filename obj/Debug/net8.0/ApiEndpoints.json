@@ -163,6 +163,22 @@
   },
   {
     "ContainingType": "Shoezy.Controllers.OrderController",
+    "Method": "GetOrdersOfUser",
+    "RelativePath": "api/Order/get-orders/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Shoezy.Controllers.OrderController",
     "Method": "GetRevenue",
     "RelativePath": "api/Order/get-revenue",
     "HttpMethod": "GET",
@@ -214,6 +230,22 @@
       {
         "Name": "Id",
         "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Shoezy.Controllers.ProductController",
+    "Method": "AddCategory",
+    "RelativePath": "api/Product/add-category",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "category",
+        "Type": "Shoezy.DTOs.AddCategoryDTO",
         "IsRequired": true
       }
     ],
@@ -282,6 +314,22 @@
   },
   {
     "ContainingType": "Shoezy.Controllers.ProductController",
+    "Method": "GetProductByBrand",
+    "RelativePath": "api/Product/brand/{brand}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "brand",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Shoezy.Controllers.ProductController",
     "Method": "GetProductByCategory",
     "RelativePath": "api/Product/category/{category}",
     "HttpMethod": "GET",
@@ -316,6 +364,26 @@
     "ContainingType": "Shoezy.Controllers.ProductController",
     "Method": "GetAllProduct",
     "RelativePath": "api/Product/get-all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Shoezy.Controllers.ProductController",
+    "Method": "GetAllProductByAdmin",
+    "RelativePath": "api/Product/get-all-admin",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Shoezy.Controllers.ProductController",
+    "Method": "GetCategory",
+    "RelativePath": "api/Product/get-category",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -384,7 +452,7 @@
     "ContainingType": "Shoezy.Controllers.ProductController",
     "Method": "UpdateProduct",
     "RelativePath": "api/Product/update/{productid}",
-    "HttpMethod": "POST",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -482,7 +550,7 @@
     "ContainingType": "Shoezy.Controllers.UserController",
     "Method": "BlockOrUnblockUser",
     "RelativePath": "api/User/block-or-unblock/{id}",
-    "HttpMethod": "POST",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [

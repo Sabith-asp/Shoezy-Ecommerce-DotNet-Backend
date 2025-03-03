@@ -82,7 +82,8 @@ namespace Shoezy.Repositories
                     Data = new
                     {
                         AccessToken = Token,
-                        RefreshToken = refreshToken
+                        RefreshToken = refreshToken,
+                        Role=data.Role,
                     }
                 };
 

@@ -104,42 +104,6 @@ namespace Shoezy.Repositories
             }
 
 
-            //if (payment == null ||
-            //    string.IsNullOrEmpty(payment.razorpay_payment_id) ||
-            //    string.IsNullOrEmpty(payment.razorpay_order_id) ||
-            //    string.IsNullOrEmpty(payment.razorpay_signature))
-            //{
-            //    return new Result<bool> { StatusCode=400,Message="credentials not found"};
-            //}
-
-            //try
-            //{
-            //    // Razorpay credentials
-            //    string key = "rzp_test_iA2stFg1qD86OQ"; // Replace with your Razorpay KeyId
-            //    string secret = "B442j5qkUCP0WrsGGgHBG6F8"; // Replace with your Razorpay KeySecret
-
-            //    // Prepare the data required for signature verification
-            //    string paymentId = payment.razorpay_payment_id;
-            //    string orderId = payment.razorpay_order_id;
-            //    string signature = payment.razorpay_signature;
-
-            //    // Generate expected signature
-            //    string generatedSignature = GenerateSignature(paymentId, orderId, secret);
-
-            //    // Verify if the signature matches
-            //    if (signature == generatedSignature)
-            //    {
-            //         return new Result<bool> { StatusCode = 200, Message = "Payment success",Data=true }; // Signature is valid
-            //    }
-            //    else
-            //    {
-            //        return new Result<bool> { StatusCode = 400, Message = "Invalid signature passed" };
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    return new Result<bool> { StatusCode = 400, Message = "Error while verifying Razorpay payment: " + ex.Message };
-            //}
         }
 
         private string GenerateSignature(string paymentId, string orderId, string secret)
@@ -240,7 +204,7 @@ namespace Shoezy.Repositories
         {
             try
             {
-                var orders = await context.Orders.Include(i => i.OrderItems)
+                var orders = await context.Orders.Include(o => o.Address).Include(i => i.OrderItems)
                                 .ThenInclude(i => i.Product)
                                 .Where(i => i.UserId == userId)
                                 .ToListAsync();
@@ -258,6 +222,7 @@ namespace Shoezy.Repositories
                     TotalPrice = i.OrderItems.Sum(x => x.TotalPrice),
                     OrderDate = i.OrderDate,
                     TransactionId = i.TransactionId,
+                    Address= mapper.Map<AddressViewDTO>(i.Address),
                     OrderProducts = mapper.Map<List<OrderViewDTO>>(i.OrderItems.ToList())
 
                 }).ToList();
@@ -277,10 +242,12 @@ namespace Shoezy.Repositories
             }
         }
 
+
+
         //admin
 
         public async Task<Result<List<ViewUserOrderDetailDTO>>> GetAllOrders() {
-            var orders = await context.Orders.Include(o => o.OrderItems).ThenInclude(o => o.Product).ToListAsync();
+            var orders = await context.Orders.Include(o=>o.Address).Include(o => o.OrderItems).ThenInclude(o => o.Product).ToListAsync();
             if (orders == null || !orders.Any()) {
                 return new Result<List<ViewUserOrderDetailDTO>> { StatusCode = 404, Message = "No orders found" };
             }
@@ -290,6 +257,7 @@ namespace Shoezy.Repositories
                 OrderId = i.OrderId,
                 TotalPrice = i.OrderItems.Sum(x => x.TotalPrice),
                 OrderDate = i.OrderDate,
+                Address = mapper.Map<AddressViewDTO>(i.Address),
                 TransactionId = i.TransactionId,
                 OrderProducts = mapper.Map<List<OrderViewDTO>>(i.OrderItems.ToList())
 
@@ -299,7 +267,7 @@ namespace Shoezy.Repositories
 
 
         public async Task<Result<object>> GetRevenue(){
-            var data= context.OrderItems.Include(x=>x.Product);
+            var data= await context.OrderItems.Include(x=>x.Product).ToListAsync();
             var amount = data.Sum(x => x.TotalPrice);
             return new Result<object> { StatusCode = 200,Message="Revenue retrieved successfully", Data = amount };
         }

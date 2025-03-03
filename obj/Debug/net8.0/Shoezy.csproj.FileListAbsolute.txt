@@ -178,3 +178,4 @@ D:\Shoezy\Backend\Shoezy\Shoezy\bin\Debug\net8.0\Newtonsoft.Json.dll
 D:\Shoezy\Backend\Shoezy\Shoezy\bin\Debug\net8.0\BouncyCastle.Crypto.dll
 D:\Shoezy\Backend\Shoezy\Shoezy\bin\Debug\net8.0\Razorpay.dll
 D:\Shoezy\Backend\Shoezy\Shoezy\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+D:\Shoezy\Backend\Shoezy\Shoezy\obj\Debug\net8.0\Shoezy.sourcelink.json

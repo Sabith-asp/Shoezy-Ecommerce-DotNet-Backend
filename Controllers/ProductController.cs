@@ -26,7 +26,7 @@ namespace Shoezy.Controllers
         
         [HttpPost("add-product")]
         [Authorize(Roles ="admin")]
-        public async Task<IActionResult> AddProduct(AddProductDTO newproduct) {
+        public async Task<IActionResult> AddProduct([FromForm]AddProductDTO newproduct) {
             if (newproduct.Image == null || newproduct.Image.Length == 0) {
                 return BadRequest("Image is required");
             }
@@ -44,6 +44,13 @@ namespace Shoezy.Controllers
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAllProduct() {
             var response = await service.GetAllProduct();
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet("get-all-admin")]
+        public async Task<IActionResult> GetAllProductByAdmin()
+        {
+            var response = await service.GetAllProductByAdmin();
             return StatusCode(response.StatusCode, response);
         }
 
@@ -68,6 +75,14 @@ namespace Shoezy.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
+        [HttpGet("brand/{brand}")]
+
+        public async Task<IActionResult> GetProductByBrand(string brand)
+        {
+            var response = await service.GetProductByBrand(brand);
+            return StatusCode(response.StatusCode, response);
+        }
+
         [HttpGet("paginated")]
         public async Task<IActionResult> GetPaginatedProduct(int pageNumber, int pageSize) {
             var response = await service.GetPaginatedProduct(pageNumber, pageSize);
@@ -81,9 +96,9 @@ namespace Shoezy.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        [HttpPost("update/{productid}")]
+        [HttpPut("update/{productid}")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> UpdateProduct(Guid productid, AddProductDTO editdata) {
+        public async Task<IActionResult> UpdateProduct(Guid productid, [FromForm]AddProductDTO editdata) {
             var response = await service.UpdateProduct(productid, editdata);
             return StatusCode(response.StatusCode, response);
         }
@@ -98,6 +113,20 @@ namespace Shoezy.Controllers
         public async Task<IActionResult> GetRelatedProducts(Guid id,string category) { 
             var response =await service.GetRelatedProducts(id,category);
             return StatusCode(response.StatusCode,response);
+        }
+
+        [HttpPost("add-category")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> AddCategory( AddCategoryDTO category)
+        {
+            var response = await service.AddCategory(category);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet("get-category")]
+        public async Task<IActionResult> GetCategory() { 
+            var response= await service.GetCategory();
+            return StatusCode(response.StatusCode, response);
         }
     }
 }

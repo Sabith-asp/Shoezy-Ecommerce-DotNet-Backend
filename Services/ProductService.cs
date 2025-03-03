@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CloudinaryDotNet;
+using Microsoft.AspNetCore.Mvc;
 using Shoezy.DTOs;
 using Shoezy.Models;
 using Shoezy.Repositories;
@@ -9,9 +10,11 @@ namespace Shoezy.Services
     public interface IProductService {
         Task <Result<object>> AddProduct(Product newproduct);
         Task <Result<List<ProductGetDTO>>> GetAllProduct();
+        Task<Result<List<ProductGetAdminDTO>>> GetAllProductByAdmin();
         Task <Result<Product>> GetProductById(Guid Id);
         Task<Result<ProductGetDTO>> GetUserProductById(Guid Id);
-        Task <Result<List<ProductGetDTO>>> GetProductByCategory(string category);
+        Task <Result<List<ProductGetAdminDTO>>> GetProductByCategory(string category);
+        Task<Result<List<ProductGetDTO>>> GetProductByBrand(string brand);
         Task <Result<List<ProductGetDTO>>> GetPaginatedProduct(int pageNumber, int pageSize);
         Task <Result<List<ProductGetDTO>>> SearchProduct(string param);
 
@@ -20,6 +23,10 @@ namespace Shoezy.Services
         Task <Result<object>> UpdateProduct(Guid productid, AddProductDTO editdata);
 
         Task<Result<object>> DeleteProduct(Guid productid);
+
+        Task<Result<object>> AddCategory(AddCategoryDTO category);
+
+        Task<Result<List<GetCategoryDTO>>> GetCategory();
     }
     public class ProductService:IProductService
     {
@@ -39,6 +46,11 @@ namespace Shoezy.Services
         {
             return await repository.GetAllProduct();
         }
+
+        public async Task<Result<List<ProductGetAdminDTO>>> GetAllProductByAdmin()
+        {
+            return await repository.GetAllProductByAdmin();
+        }
         public async Task<Result<Product>> GetProductById(Guid Id) { 
             return await repository.GetProductById(Id);
         }
@@ -46,7 +58,7 @@ namespace Shoezy.Services
         {
             return await repository.GetUserProductById(Id);
         }
-        public async Task<Result<List<ProductGetDTO>>> GetProductByCategory(string category) { 
+        public async Task<Result<List<ProductGetAdminDTO>>> GetProductByCategory(string category) { 
             return await repository.GetProductByCategory(category);
         }
 
@@ -120,6 +132,47 @@ namespace Shoezy.Services
             catch (Exception ex) {
 
                 return new Result<List<ProductGetDTO>> { StatusCode=500,Message=ex.Message}; }
+        }
+
+        public async Task<Result<List<ProductGetDTO>>> GetProductByBrand(string brand) {
+
+            try
+            {
+                var data = await repository.GetProductByBrand(brand);
+                if (data.Count < 1)
+                {
+                    return new Result<List<ProductGetDTO>> { StatusCode = 404, Message = "No products found in this brand" };
+                }
+                var result = mapper.Map<List<ProductGetDTO>>(data);
+                return new Result<List<ProductGetDTO>> { StatusCode = 200, Message = "product by brand success", Data = result };
+            }
+            catch (Exception ex)
+            {
+                return new Result<List<ProductGetDTO>> { StatusCode = 500, Message = ex.Message };
+            }
+        }
+
+        public async Task<Result<object>> AddCategory(AddCategoryDTO category)
+        {
+            try {
+                var data=mapper.Map<Category>(category);
+                var response=await repository.AddCategory(data);
+                    return new Result<object> { StatusCode = 200, Message = "Category added" };
+
+            } 
+            catch (Exception ex) { 
+                return new Result<object> { StatusCode=500, Message = ex.Message };
+            }
+        }
+
+        public async Task<Result<List<GetCategoryDTO>>> GetCategory()
+        {
+            try { 
+                var response=await repository.GetCategory();
+                var data=mapper.Map<List<GetCategoryDTO>>(response);
+                return new Result<List<GetCategoryDTO>> { StatusCode = 200,Message="Category retrieved successfully", Data = data };
+            
+            } catch (Exception ex) { return new Result<List<GetCategoryDTO>> { StatusCode = 500, Message = ex.Message }; }
         }
 
     }

@@ -72,6 +72,17 @@ namespace Shoezy.Controllers
             return StatusCode(response.StatusCode,response);
         }
 
+
+        [Authorize(Roles ="admin")]
+        [HttpGet("get-orders/{userId}")]
+
+        public async Task<IActionResult> GetOrdersOfUser(int userId)
+        {
+
+            var response = await service.GetOrderDetails(userId);
+            return StatusCode(response.StatusCode, response);
+        }
+
         [HttpGet("get-all-orders")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllOrders() {

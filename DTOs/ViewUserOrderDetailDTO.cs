@@ -6,6 +6,9 @@
         public DateTime OrderDate { get; set; }
         public Guid OrderId { get; set; }
         public int TotalPrice { get; set; }
+
+        public AddressViewDTO Address { get; set; }
+
         public string TransactionId { get; set; }
         public List<OrderViewDTO> OrderProducts { get; set; }
     }

@@ -12,6 +12,8 @@ namespace Shoezy.DTOs
         [Required]
         public string PhoneNo { get; set; }
         [Required]
+        public bool IsBlocked { get; set; }
+        [Required]
         public string UserName { get; set; }
         [Required]
         public string Role { get; set; } = "user";
