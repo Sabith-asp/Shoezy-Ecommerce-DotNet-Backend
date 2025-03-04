@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shoezy.Data;
 
@@ -11,9 +12,11 @@ using Shoezy.Data;
 namespace Shoezy.Migrations
 {
     [DbContext(typeof(ShoezyDbContext))]
-    partial class ShoezyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250304110855_isDeleteAdded")]
+    partial class isDeleteAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

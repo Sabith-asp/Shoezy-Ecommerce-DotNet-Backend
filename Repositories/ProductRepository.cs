@@ -54,7 +54,7 @@ namespace Shoezy.Repositories
         public async Task<Result<List<ProductGetDTO>>> GetAllProduct()
         {
             try {
-                var data =await context.Products.Include(p=>p.Category).ToListAsync();
+                var data =await context.Products.Include(p=>p.Category).Where(p=>p.isDeleted==false).ToListAsync();
                 var mappeddata = mapper.Map<List<ProductGetDTO>>(data);
                 return new Result<List<ProductGetDTO>> { StatusCode=200,Message="Product Loaded Successfully",Data= mappeddata };
             } 
@@ -112,7 +112,7 @@ namespace Shoezy.Repositories
         public async Task<Result<List<ProductGetAdminDTO>>> GetProductByCategory(string category)
         {
             try {
-                var data = await context.Products.Include(x => x.Category).Where(x => x.Category.Name.ToLower() == category.ToLower()).ToListAsync();
+                var data = await context.Products.Include(x => x.Category).Where(x => x.Category.Name.ToLower() == category.ToLower() &&  x.isDeleted == false).ToListAsync();
                 if (data.Count < 1) {
                     return new Result<List<ProductGetAdminDTO>> { StatusCode = 404, Message = "No products found in this category" };
                         }
@@ -124,7 +124,7 @@ namespace Shoezy.Repositories
         }
         public async Task<List<Product>> GetProductByBrand(string brand)
         {
-            return await context.Products.Include(x => x.Category).Where(x => x.Brand.ToLower() == brand.ToLower()).ToListAsync();
+            return await context.Products.Include(x => x.Category).Where(x => x.Brand.ToLower() == brand.ToLower() && x.isDeleted == false).ToListAsync();
             //try
             //{
             //    var data = await context.Products.Include(x => x.Category).Where(x => x.Brand== brand).ToListAsync();
@@ -145,7 +145,7 @@ namespace Shoezy.Repositories
         {
             try
             {
-                var products = await context.Products.Include(p=>p.Category)
+                var products = await context.Products.Include(p=>p.Category).Where(p => p.isDeleted == false)
             .Skip((pageNumber - 1) * pageSize) 
             .Take(pageSize)                     
             .ToListAsync();
@@ -164,7 +164,7 @@ namespace Shoezy.Repositories
 
         public async Task<Result<List<ProductGetDTO>>> SearchProduct(string param) {
             try { 
-                var data = context.Products.Include(p=>p.Category).Where(x => x.Title.Contains(param)).ToList();
+                var data = context.Products.Include(p=>p.Category).Where(x => x.Title.Contains(param) && x.isDeleted == false).ToList();
                 if (data == null || data.Count<1) {
                     return new Result<List<ProductGetDTO>> { StatusCode = 200, Message = "No products found" };
                 }
@@ -194,7 +194,8 @@ namespace Shoezy.Repositories
                 }
                 Console.WriteLine(product.Title);
 
-                context.Products.Remove(product);
+                //context.Products.Remove(product);
+                product.isDeleted = true;
                 await context.SaveChangesAsync();
                 return new Result<object> { StatusCode = 200, Message = "Product deleted successfully" };
 
@@ -208,7 +209,7 @@ namespace Shoezy.Repositories
         }
 
         public async Task<List<Product>> GetRelatedProducts(Guid id,string category) {
-            return await context.Products.Include(p=>p.Category).Where(x=>x.Category.Name.Contains(category) && x.Id!=id).ToListAsync();
+            return await context.Products.Include(p=>p.Category).Where(x=>x.Category.Name.Contains(category) && x.Id!=id && x.isDeleted == false).ToListAsync();
         }
 
         //public async Task<Result<ProductGetDTO>> GetUserProductById(Guid Id) { 

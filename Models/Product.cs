@@ -27,9 +27,12 @@ namespace Shoezy.Models
         [Required]
         public int Quantity { get; set; }
 
+        public bool? isDeleted { get; set; }=false;
+
         public Wishlist Whishlist { get; set; }
 
         public Category Category { get; set; }
+
        
     }
 }

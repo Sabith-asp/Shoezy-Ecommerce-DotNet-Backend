@@ -25,7 +25,8 @@ namespace Shoezy.DTOs
             public int Quantity { get; set; }
             [Range(0, 100)]
             public int Discount { get; set; } = 0;
+            public bool? isDeleted { get; set; }
 
 
-}
+    }
 }
