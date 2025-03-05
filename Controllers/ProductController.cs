@@ -117,7 +117,7 @@ namespace Shoezy.Controllers
 
         [HttpPost("add-category")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> AddCategory( AddCategoryDTO category)
+        public async Task<IActionResult> AddCategory( string category)
         {
             var response = await service.AddCategory(category);
             return StatusCode(response.StatusCode, response);

@@ -24,7 +24,7 @@ namespace Shoezy.Services
 
         Task<Result<object>> DeleteProduct(Guid productid);
 
-        Task<Result<object>> AddCategory(AddCategoryDTO category);
+        Task<Result<object>> AddCategory(string category);
 
         Task<Result<List<GetCategoryDTO>>> GetCategory();
     }
@@ -152,10 +152,14 @@ namespace Shoezy.Services
             }
         }
 
-        public async Task<Result<object>> AddCategory(AddCategoryDTO category)
+        public async Task<Result<object>> AddCategory(string category)
         {
             try {
-                var data=mapper.Map<Category>(category);
+                //var data=mapper.Map<Category>(category);
+                var data = new Category
+                {
+                    Name = category,
+                };
                 var response=await repository.AddCategory(data);
                     return new Result<object> { StatusCode = 200, Message = "Category added" };
 

@@ -245,8 +245,8 @@
     "Parameters": [
       {
         "Name": "category",
-        "Type": "Shoezy.DTOs.AddCategoryDTO",
-        "IsRequired": true
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
