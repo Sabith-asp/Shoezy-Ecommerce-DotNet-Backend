@@ -9,6 +9,7 @@ using Shoezy.Repositories;
 using Shoezy.Services;
 using Microsoft.OpenApi.Models;
 using Shoezy.Configuration;
+using Shoezy.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -86,18 +87,18 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+
+
 var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true,
-            ValidateAudience = true,
+            ValidateIssuer = false,
+            ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
             ClockSkew = TimeSpan.Zero,
             IssuerSigningKey = new SymmetricSecurityKey(key)
         };
@@ -121,11 +122,12 @@ if (app.Environment.IsDevelopment())
 }
 
 
+
 app.UseHttpsRedirection();
 app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseMiddleware<UserIdMiddleware>();
 
 
 

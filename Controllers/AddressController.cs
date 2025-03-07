@@ -17,18 +17,22 @@ namespace Shoezy.Controllers
         public AddressController(IAddressService _service) {
             addressservice = _service;
                 }
-        
+
+        private int? GetUserId() {
+            return HttpContext.Items["UserId"] as int?;
+        }
+
         [HttpPost("add-address")]
         [Authorize(Roles = "user")]
 
         public async Task<IActionResult> AddAddress(AddressCreateDTO newaddress) {
-            var userIdClaim = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-
-            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+            var userId = GetUserId();
+            Console.WriteLine(userId);
+            if (userId == null)
             {
                 return Unauthorized("User not authorized");
             }
-            var response = await addressservice.AddAddress(userId, newaddress);
+            var response = await addressservice.AddAddress(userId.Value, newaddress);
             return StatusCode(response.StatusCode,response);
         }
         
@@ -36,13 +40,12 @@ namespace Shoezy.Controllers
         [Authorize(Roles = "user")]
 
         public async Task<IActionResult> GetAddress() {
-            var userIdClaim = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-
-            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+            var userId = GetUserId();
+            if (userId == null)
             {
                 return Unauthorized("User not authorized");
             }
-            var response = await addressservice.GetAddress(userId);
+            var response = await addressservice.GetAddress(userId.Value);
             return StatusCode(response.StatusCode,response);
         }
 
@@ -50,13 +53,12 @@ namespace Shoezy.Controllers
         [Authorize(Roles = "user")]
 
         public async Task<IActionResult> RemoveAddress(Guid addressid) {
-            var userIdClaim = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-
-            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+            var userId = GetUserId();
+            if (userId == null)
             {
                 return Unauthorized("User not authorized");
             }
-            var response = await addressservice.RemoveAddress(userId, addressid);
+            var response = await addressservice.RemoveAddress(userId.Value, addressid);
             return StatusCode(response.StatusCode, response);
         }
     }

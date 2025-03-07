@@ -16,6 +16,12 @@ namespace Shoezy.Controllers
         public OrderController(IOrderService _service) {
             service= _service;
         }
+
+        private int? GetUserId()
+        {
+            return HttpContext.Items["UserId"] as int?;
+        }
+
         [Authorize]
         [HttpPost("create-order")]
         public async Task<IActionResult> CreateOrder(int price) {
@@ -62,20 +68,19 @@ namespace Shoezy.Controllers
         [HttpGet("get-orders")]
 
         public async Task<IActionResult> GetOrders() {
-            var userIdClaim = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-
-            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+            var userId = GetUserId();
+            if (userId == null)
             {
                 return Unauthorized("User not authorized");
             }
-            var response= await service.GetOrderDetails(userId);
+            var response= await service.GetOrderDetails(userId.Value);
             return StatusCode(response.StatusCode,response);
         }
 
 
-        [Authorize(Roles ="admin")]
+        
         [HttpGet("get-orders/{userId}")]
-
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetOrdersOfUser(int userId)
         {
 

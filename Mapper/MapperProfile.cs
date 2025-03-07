@@ -20,7 +20,6 @@ namespace Shoezy.Mapper
             CreateMap<AddProductDTO, Product>();
             CreateMap<User, GetUserDTO>();
             CreateMap<Address,AddressViewDTO>();
-            CreateMap<AddCategoryDTO, Category>();
             CreateMap<Category, GetCategoryDTO>();
         }
     }

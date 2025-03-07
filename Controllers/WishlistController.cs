@@ -21,19 +21,26 @@ namespace Shoezy.Controllers
             wishlistService = _service;
         }
 
+
+        private int? GetUserId()
+        {
+            return HttpContext.Items["UserId"] as int?;
+        }
+
+
         [HttpPost("add-or-remove")]
         [Authorize(Roles = "user")]
 
 
         public async Task<IActionResult> AddOrRemoveWishList(Guid productId)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+            var userId = GetUserId();
+            if (userId == null)
             {
                 return Unauthorized("User not authorized");
             }
 
-            var response=await wishlistService.AddOrRemoveToWishList(userId, productId);
+            var response=await wishlistService.AddOrRemoveToWishList(userId.Value, productId);
             return StatusCode(response.StatusCode, response);
 
 
@@ -42,13 +49,12 @@ namespace Shoezy.Controllers
         [HttpGet("get-all")]
         [Authorize(Roles = "user")]
         public async Task<IActionResult> GetWishList() {
-            var userIdClaim = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-
-            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+            var userId = GetUserId();
+            if (userId == null)
             {
                 return Unauthorized("User not authorized");
             }
-            var response = await wishlistService.GetWishList(userId);
+            var response = await wishlistService.GetWishList(userId.Value);
             return StatusCode(response.StatusCode, response);
         }
 

@@ -18,16 +18,20 @@ namespace Shoezy.Controllers
             cartservice= _service;
         }
 
+        private int? GetUserId()
+        {
+            return HttpContext.Items["UserId"] as int?;
+        }
+
         [HttpPost("add-to-cart")]
         [Authorize(Roles = "user")]
         public async Task<IActionResult> AddToCart(Guid productId) {
-            var userIdClaim = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-
-            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+            var userId = GetUserId();
+            if (userId == null)
             {
                 return Unauthorized("User not authorized");
             }
-            var response=await cartservice.AddToCart(userId, productId);
+            var response=await cartservice.AddToCart(userId.Value, productId);
             return StatusCode(response.StatusCode, response);
         }
 
@@ -35,13 +39,12 @@ namespace Shoezy.Controllers
         [Authorize(Roles = "user")]
         public async Task<IActionResult> GetAllInCart()
         {
-            var userIdClaim = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+            var userId = GetUserId();
+            if (userId == null)
             {
                 return Unauthorized("User not authorized");
-                
             }
-            var response = await cartservice.GetAllInCart(userId);
+            var response = await cartservice.GetAllInCart(userId.Value);
             return StatusCode(response.StatusCode, response);
         }
 
@@ -50,13 +53,12 @@ namespace Shoezy.Controllers
 
         public async Task<IActionResult> RemoveFromCart( Guid cartItemId)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+            var userId = GetUserId();
+            if (userId == null)
             {
                 return Unauthorized("User not authorized");
-
             }
-            var result = await cartservice.RemoveFromCart(userId, cartItemId);
+            var result = await cartservice.RemoveFromCart(userId.Value, cartItemId);
             return StatusCode(result.StatusCode, result);
         }
 
@@ -64,13 +66,12 @@ namespace Shoezy.Controllers
         [Authorize(Roles = "user")]
         public async Task<IActionResult> RemoveAllFromCart()
         {
-            var userIdClaim = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+            var userId = GetUserId();
+            if (userId == null)
             {
                 return Unauthorized("User not authorized");
-
             }
-            var result = await cartservice.RemoveAllFromCart(userId);
+            var result = await cartservice.RemoveAllFromCart(userId.Value);
             return StatusCode(result.StatusCode, result);
         }
 
@@ -78,13 +79,12 @@ namespace Shoezy.Controllers
         [Authorize(Roles = "user")]
         public async Task<IActionResult> IncreaseQty( Guid cartItemId)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+            var userId = GetUserId();
+            if (userId == null)
             {
                 return Unauthorized("User not authorized");
-
             }
-            var result = await cartservice.IncreaseQty(userId, cartItemId);
+            var result = await cartservice.IncreaseQty(userId.Value, cartItemId);
             return StatusCode(result.StatusCode, result);
         }
 
@@ -92,13 +92,12 @@ namespace Shoezy.Controllers
         [Authorize(Roles = "user")]
         public async Task<IActionResult> DecreaseQty( Guid cartItemId)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+            var userId = GetUserId();
+            if (userId == null)
             {
                 return Unauthorized("User not authorized");
-
             }
-            var result = await cartservice.DecreaseQty(userId, cartItemId);
+            var result = await cartservice.DecreaseQty(userId.Value, cartItemId);
             return StatusCode(result.StatusCode, result);
         }
 

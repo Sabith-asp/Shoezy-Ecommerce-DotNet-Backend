@@ -43,14 +43,14 @@ namespace Shoezy.Repositories
                 }
                 Dictionary<string, object> input = new Dictionary<string, object>
                 {
-                    { "amount", price * 100 }, // Razorpay expects price in paise (multiply by 100)
-                    { "currency", "INR" }, // Currency is INR
-                    { "receipt", Guid.NewGuid().ToString() } // Unique receipt ID for the order
+                    { "amount", price * 100 }, 
+                    { "currency", "INR" }, 
+                    { "receipt", Guid.NewGuid().ToString() }
                 };
 
-                // Hardcoded Razorpay credentials
-                string key = "rzp_test_JChdnCdqvPMIoB"; // Replace with your Razorpay KeyId
-                string secret = "cbz6sk8xnH9H14SpJ4Io8oke"; // Replace with your Razorpay KeySecret
+                
+                string key = "rzp_test_JChdnCdqvPMIoB"; 
+                string secret = "cbz6sk8xnH9H14SpJ4Io8oke"; 
                 RazorpayClient client = new RazorpayClient(key, secret);
                 Razorpay.Api.Order order = client.Order.Create(input);
                 string orderId = order["id"].ToString();
@@ -63,7 +63,7 @@ namespace Shoezy.Repositories
             }
         }
 
-        // Razorpay Payment Verification
+        
         public async Task<Result<bool>> RazorPayment(PaymentDTO payment)
         {
 
@@ -77,7 +77,7 @@ namespace Shoezy.Repositories
 
             try
             {
-                // Replace with your Razorpay credentials
+                
                 string key = "rzp_test_iA2stFg1qD86OQ";
                 string secret = "B442j5qkUCP0WrsGGgHBG6F8";
 
@@ -86,10 +86,10 @@ namespace Shoezy.Repositories
             { "razorpay_payment_id", payment.razorpay_payment_id },
             { "razorpay_order_id", payment.razorpay_order_id },
             { "razorpay_signature", payment.razorpay_signature },
-            { "secret", secret }  // Include the secret key inside the dictionary
+            { "secret", secret }
         };
 
-                // Use Razorpay's built-in signature verification (with one parameter)
+              
                 Utils.verifyPaymentSignature(attributes);
 
                 return new Result<bool> { StatusCode = 200, Message = "Payment success", Data = true };
@@ -122,27 +122,7 @@ namespace Shoezy.Repositories
 
 
 
-        //private string GenerateSignature(string paymentId, string orderId, string secret)
-        //{
-        //    string stringToSign = orderId + "|" + paymentId;
-
-        //    using (var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secret)))
-        //    {
-        //        var hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(stringToSign));
-        //        return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-        //    }
-        //}
-
-
-        //private string GenerateSignature(string paymentId, string orderId, string secret)
-        //{
-        //    // Razorpay signature generation formula
-        //    string stringToSign = orderId + "|" + paymentId;
-        //    var hmac = new HMACSHA256();
-        //    hmac.Key = Encoding.ASCII.GetBytes(secret);
-        //    var hashBytes = hmac.ComputeHash(Encoding.ASCII.GetBytes(stringToSign));
-        //    return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-        //}
+ 
 
         public async Task<Result<object>> CreateOrder(int userId, CreateOrderDTO createOrderDTO)
         {

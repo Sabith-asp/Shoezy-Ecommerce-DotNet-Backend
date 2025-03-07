@@ -124,6 +124,7 @@ namespace Shoezy.Controllers
         }
 
         [HttpGet("get-category")]
+        [Authorize]
         public async Task<IActionResult> GetCategory() { 
             var response= await service.GetCategory();
             return StatusCode(response.StatusCode, response);

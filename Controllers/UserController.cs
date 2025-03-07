@@ -16,6 +16,13 @@ namespace Shoezy.Controllers
         public UserController(IUserService _service) { 
         service= _service;
         }
+
+        private int? GetUserId()
+        {
+            return HttpContext.Items["UserId"] as int?;
+        }
+
+
         [HttpGet("get-all")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetUsers() {
@@ -31,13 +38,12 @@ namespace Shoezy.Controllers
         [HttpGet("get-user")]
         [Authorize(Roles = "user")]
         public async Task<IActionResult> GetUser() {
-            var userIdClaim = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-
-            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+            var userId = GetUserId();
+            if (userId == null)
             {
                 return Unauthorized("User not authorized");
             }
-            var response=await service.GetUser(userId);
+            var response=await service.GetUser(userId.Value);
             return StatusCode(response.StatusCode, response);
         }
 
